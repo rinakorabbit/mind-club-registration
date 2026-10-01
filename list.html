@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>รายชื่อผู้ลงทะเบียน | กิจกรรมการพัฒนาจิตเพื่อคุณภาพชีวิต</title>
+<meta name="theme-color" content="#F6F1FB">
+<link rel="icon" href="lotus.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@700;800&family=Sarabun:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <img class="lotus" src="lotus.svg" alt="ดอกบัว สัญลักษณ์แห่งความสงบ">
+    <div class="text">
+      <p class="org" id="orgLine"></p>
+      <h1>รายชื่อผู้ลงทะเบียน</h1>
+      <p style="margin:.4rem 0 0" id="evName"></p>
+      <span class="count-chip" id="countChip" role="status">กำลังโหลดรายชื่อ…</span>
+    </div>
+  </header>
+
+  <main class="panel">
+    <div class="field">
+      <label for="q">ค้นหาชื่อของท่าน</label>
+      <input type="search" id="q" placeholder="พิมพ์ชื่อหรือนามสกุล" autocomplete="off">
+    </div>
+    <p class="hint">แสดงเฉพาะชื่อ-นามสกุล เรียงตามตัวอักษร ก–ฮ</p>
+    <div id="out" aria-live="polite"></div>
+    <p style="text-align:center;margin:1.5rem 0 0"><a class="btn btn-ghost" href="index.html">กลับไปหน้าลงทะเบียน</a></p>
+  </main>
+</div>
+
+<script src="config.js"></script>
+<script>
+(function () {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  $('orgLine').innerHTML = esc(CONFIG.ORG_UNIT) + '<br>' + esc(CONFIG.HOSPITAL);
+  $('evName').textContent = CONFIG.EVENT_NAME;
+
+  const collator = new Intl.Collator('th');
+  let names = [];
+
+  // เรียงแบบพจนานุกรมไทย (ราชบัณฑิตยสภา): ข้ามสระนำ เ แ โ ใ ไ แล้วเทียบพยัญชนะตัวถัดไป
+  const sortKey = (n) => n.replace(/^[\sเแโใไ"'“”(]+/, '');
+  const byThai = (a, b) => collator.compare(sortKey(a), sortKey(b)) || collator.compare(a, b);
+
+  // อักษรตัวแรกสำหรับจัดกลุ่ม: ข้ามสระนำ เ แ โ ไ ใ และเครื่องหมายนำหน้า
+  function groupOf(name) {
+    const s = name.replace(/^[\sเแโใไ"'“”(]+/, '');
+    const ch = s.charAt(0) || name.charAt(0);
+    return /[ก-ฮ]/.test(ch) ? ch : (ch ? ch.toUpperCase() : '#');
+  }
+
+  function render() {
+    const q = $('q').value.trim().toLowerCase();
+    const list = q ? names.filter((n) => n.toLowerCase().includes(q)) : names;
+    const out = $('out');
+    if (!list.length) {
+      out.innerHTML = '<p class="empty">' + (names.length ? 'ไม่พบชื่อที่ค้นหา ลองพิมพ์เฉพาะชื่อหรือนามสกุล' : 'ยังไม่มีผู้ลงทะเบียน') + '</p>';
+      return;
+    }
+    const groups = new Map();
+    list.forEach((n) => { const g = groupOf(n); if (!groups.has(g)) groups.set(g, []); groups.get(g).push(n); });
+    const keys = [...groups.keys()].sort((a, b) => collator.compare(a, b));
+    out.innerHTML = keys.map((k) =>
+      '<section class="letter-group"><h3 aria-label="หมวดอักษร ' + esc(k) + '">' + esc(k) + '</h3><ul class="names">' +
+      groups.get(k).map((n) => '<li>' + esc(n) + '</li>').join('') + '</ul></section>').join('');
+  }
+
+  async function load() {
+    try {
+      const r = await callApi('publicList', {}, 30000);
+      if (!r.ok) throw new Error(r.error || 'ERR');
+      names = r.names.slice().sort(byThai);
+      $('countChip').textContent = 'ลงทะเบียนแล้ว ' + names.length.toLocaleString('th-TH') + ' ท่าน';
+      render();
+    } catch (e) {
+      $('countChip').textContent = 'ไม่สามารถแสดงรายชื่อได้';
+      $('out').innerHTML = '<div class="alert error">' + (e.code === 'NOT_CONFIGURED'
+        ? 'ยังไม่ได้ตั้งค่า API_URL ในไฟล์ config.js'
+        : esc(e.message === 'ERR' || !e.message ? 'ไม่สามารถโหลดรายชื่อได้ กรุณาลองใหม่ภายหลัง' : e.message)) + '</div>';
+    }
+  }
+  $('q').addEventListener('input', render);
+  load();
+  setInterval(() => { if (!document.hidden) load(); }, 60000);
+})();
+</script>
+</body>
+</html>
