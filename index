@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ลงทะเบียน กิจกรรมการพัฒนาจิตเพื่อคุณภาพชีวิต</title>
+<meta name="description" content="ลงทะเบียนเข้าร่วมกิจกรรมการพัฒนาจิตเพื่อคุณภาพชีวิต โรงพยาบาลสมเด็จพระบรมราชเทวี ณ ศรีราชา">
+<meta name="theme-color" content="#F6F1FB">
+<link rel="icon" href="lotus.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@700;800&family=Sarabun:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">ข้ามไปยังแบบฟอร์ม</a>
+
+<div class="wrap">
+  <header class="hero">
+    <img class="lotus" src="lotus.svg" alt="ดอกบัว สัญลักษณ์แห่งความสงบ">
+    <div class="text">
+      <p class="org" id="orgLine"></p>
+      <h1>ลงทะเบียน<br>กิจกรรมการพัฒนาจิตเพื่อคุณภาพชีวิต</h1>
+      <div class="event-meta" id="eventMeta"></div>
+    </div>
+  </header>
+
+  <main id="main">
+    <noscript><div class="alert error">หน้านี้ต้องเปิดใช้งาน JavaScript จึงจะลงทะเบียนได้</div></noscript>
+
+    <!-- ===================== แบบฟอร์ม ===================== -->
+    <section id="formView" class="panel" aria-labelledby="stepTitle1">
+      <ol class="progress" id="progress" aria-label="ขั้นตอนการลงทะเบียน">
+        <li>ข้อมูลของท่าน</li>
+        <li>สังกัด</li>
+        <li>ตรวจสอบ</li>
+      </ol>
+
+      <div id="formAlert" role="alert"></div>
+
+      <form id="regForm" novalidate autocomplete="on">
+
+        <!-- ขั้นที่ 1 -->
+        <fieldset class="step" id="step1">
+          <h2 id="stepTitle1" tabindex="-1">ขั้นที่ 1 : ข้อมูลของท่าน</h2>
+          <p class="lead">กรอกให้ครบทุกช่อง เจ้าหน้าที่จะใช้ติดต่อท่านหากมีการเปลี่ยนแปลง</p>
+
+          <div class="field" id="f-name">
+            <label for="name">ชื่อ-นามสกุล</label>
+            <span class="hint" id="h-name">พิมพ์ชื่อ แล้วเว้นวรรค ตามด้วยนามสกุล</span>
+            <input type="text" id="name" name="name" autocomplete="name" aria-describedby="h-name e-name" maxlength="120" placeholder="เช่น สมใจ ใจดี">
+            <p class="err" id="e-name"></p>
+          </div>
+
+          <div class="field" id="f-phone">
+            <label for="phone">เบอร์โทรศัพท์</label>
+            <span class="hint" id="h-phone">ตัวเลข 9–10 หลัก เช่น 0812345678</span>
+            <input type="tel" id="phone" name="phone" inputmode="tel" autocomplete="tel" aria-describedby="h-phone e-phone" maxlength="20" placeholder="0812345678">
+            <p class="err" id="e-phone"></p>
+          </div>
+
+          <div class="field" id="f-email">
+            <label for="email">อีเมล (E-mail)</label>
+            <span class="hint" id="h-email">ระบบจะส่งการยืนยันและบัตร QR เข้างานไปที่อีเมลนี้</span>
+            <input type="email" id="email" name="email" inputmode="email" autocomplete="email" aria-describedby="h-email e-email" maxlength="150" placeholder="example@gmail.com" autocapitalize="none" spellcheck="false">
+            <p class="err" id="e-email"></p>
+          </div>
+
+          <div class="nav">
+            <button type="button" class="btn btn-primary" data-next>ถัดไป</button>
+          </div>
+        </fieldset>
+
+        <!-- ขั้นที่ 2 -->
+        <fieldset class="step" id="step2" hidden>
+          <h2 id="stepTitle2" tabindex="-1">ขั้นที่ 2 : สังกัด</h2>
+          <p class="lead">เลือกให้ตรงกับท่านมากที่สุด</p>
+
+          <div class="field" id="f-type">
+            <span class="label" id="l-type">ประเภทผู้เข้าร่วม</span>
+            <div class="choices" role="radiogroup" aria-labelledby="l-type" aria-describedby="e-type">
+              <label class="choice"><input type="radio" name="type" value="EXT"> บุคลากรภายนอกโรงพยาบาล</label>
+              <label class="choice"><input type="radio" name="type" value="INT"> บุคลากร รพ.สมเด็จฯ ณ ศรีราชา</label>
+            </div>
+            <p class="err" id="e-type"></p>
+          </div>
+
+          <div class="reveal" id="internalBox" hidden>
+            <div class="field" id="f-dept">
+              <label for="dept">ฝ่าย / หน่วยงานต้นสังกัด</label>
+              <span class="hint" id="h-dept">พิมพ์คำค้นหา เช่น “อายุรกรรม” หรือกดลูกศรเพื่อดูรายการทั้งหมด แล้วแตะเลือก</span>
+              <div class="combo" id="deptCombo">
+                <input type="text" id="dept" role="combobox" aria-expanded="false" aria-controls="deptList" aria-autocomplete="list" autocomplete="off" aria-describedby="h-dept e-dept" placeholder="พิมพ์เพื่อค้นหา">
+                <button type="button" class="combo-toggle" aria-label="แสดงรายการฝ่ายทั้งหมด" tabindex="-1">▾</button>
+                <ul id="deptList" role="listbox" aria-label="รายการฝ่าย/หน่วยงาน" hidden></ul>
+              </div>
+              <p class="err" id="e-dept"></p>
+            </div>
+
+            <div class="field" id="f-pos">
+              <label for="pos">ตำแหน่งงาน</label>
+              <span class="hint" id="h-pos">พิมพ์คำค้นหา เช่น “พยาบาล” หรือกดลูกศรเพื่อดูรายการทั้งหมด แล้วแตะเลือก</span>
+              <div class="combo" id="posCombo">
+                <input type="text" id="pos" role="combobox" aria-expanded="false" aria-controls="posList" aria-autocomplete="list" autocomplete="off" aria-describedby="h-pos e-pos" placeholder="พิมพ์เพื่อค้นหา">
+                <button type="button" class="combo-toggle" aria-label="แสดงรายการตำแหน่งทั้งหมด" tabindex="-1">▾</button>
+                <ul id="posList" role="listbox" aria-label="รายการตำแหน่งงาน" hidden></ul>
+              </div>
+              <p class="err" id="e-pos"></p>
+            </div>
+          </div>
+
+          <div class="nav">
+            <button type="button" class="btn btn-ghost" data-back>ย้อนกลับ</button>
+            <button type="button" class="btn btn-primary" data-next>ถัดไป</button>
+          </div>
+        </fieldset>
+
+        <!-- ขั้นที่ 3 -->
+        <fieldset class="step" id="step3" hidden>
+          <h2 id="stepTitle3" tabindex="-1">ขั้นที่ 3 : ตรวจสอบข้อมูล</h2>
+          <p class="lead">ตรวจดูอีกครั้ง หากไม่ถูกต้องกด “แก้ไข” ที่ข้อนั้น</p>
+
+          <dl class="review" id="review"></dl>
+
+          <div class="field" id="f-consent">
+            <label class="consent">
+              <input type="checkbox" id="consent" aria-describedby="e-consent">
+              <span>ข้าพเจ้ายินยอมให้งานกิจกรรมวิชาการและการจัดการความรู้ ฝ่ายวิชาการและวิจัย เก็บและใช้ข้อมูลข้างต้นเพื่อการลงทะเบียน การติดต่อ และการบริหารกิจกรรมนี้เท่านั้น</span>
+            </label>
+            <p class="err" id="e-consent"></p>
+          </div>
+
+          <div class="hp" aria-hidden="true"><label>เว็บไซต์ <input type="text" id="website" tabindex="-1" autocomplete="off"></label></div>
+
+          <div class="nav">
+            <button type="button" class="btn btn-ghost" data-back>ย้อนกลับ</button>
+            <button type="submit" class="btn btn-primary" id="submitBtn">ยืนยันการลงทะเบียน</button>
+          </div>
+        </fieldset>
+      </form>
+    </section>
+
+    <!-- ===================== ลงทะเบียนสำเร็จ ===================== -->
+    <section id="doneView" class="panel ticket" hidden aria-live="polite">
+      <div id="ticket">
+        <span class="badge" id="doneBadge">ลงทะเบียนสำเร็จ</span>
+        <h2 id="doneTitle" tabindex="-1">ขอบคุณที่ลงทะเบียน</h2>
+        <p id="doneMsg" style="margin:.2rem 0 0"></p>
+
+        <div class="pass">
+          <canvas id="qrCanvas" width="520" height="520" role="img" aria-label="คิวอาร์โค้ดสำหรับเช็กอินหน้างาน"></canvas>
+          <p class="pid" id="passId"></p>
+          <p class="pname" id="passName"></p>
+          <p class="ptype" id="passType"></p>
+        </div>
+      </div>
+
+      <div id="mailNote"></div>
+
+      <div class="actions">
+        <button type="button" class="btn btn-primary" id="saveBtn">บันทึกบัตรเข้างานเป็นรูปภาพ</button>
+        <button type="button" class="btn btn-ghost" id="printBtn">พิมพ์บัตรเข้างาน</button>
+        <button type="button" class="btn btn-ghost" id="againBtn">ลงทะเบียนให้ผู้อื่น</button>
+      </div>
+
+      <div class="contact" id="contactBox"></div>
+    </section>
+  </main>
+</div>
+
+<footer class="site" id="siteFooter"></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="config.js"></script>
+<script>
+(function () {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+
+  /* ---------- ข้อความจาก CONFIG ---------- */
+  $('orgLine').innerHTML = esc(CONFIG.ORG_UNIT) + '<br>' + esc(CONFIG.HOSPITAL);
+  const meta = [];
+  if (CONFIG.EVENT_DATE) meta.push('<span>🗓 ' + esc(CONFIG.EVENT_DATE) + '</span>');
+  if (CONFIG.EVENT_PLACE) meta.push('<span>📍 ' + esc(CONFIG.EVENT_PLACE) + '</span>');
+  $('eventMeta').innerHTML = meta.join('');
+
+  const contactHtml =
+    '<h3>สอบถามข้อมูลเพิ่มเติม</h3>' +
+    esc(CONFIG.ORG_UNIT) + '<br>' + esc(CONFIG.ADDRESS) + '<br>' +
+    'โทร <a href="tel:' + esc(CONFIG.PHONE_LINK) + '">' + esc(CONFIG.PHONE_TEXT) + '</a>';
+  $('contactBox').innerHTML = contactHtml;
+  $('siteFooter').innerHTML =
+    esc(CONFIG.ORG_UNIT) + '<br>' + esc(CONFIG.HOSPITAL) +
+    (CONFIG.SHOW_LIST_LINK ? '<br><a href="list.html">ดูรายชื่อผู้ลงทะเบียน</a>' : '');
+
+  /* ---------- ช่องเลือกแบบค้นหาได้ ---------- */
+  function makeCombo(root, items) {
+    const input = root.querySelector('input');
+    const list = root.querySelector('ul');
+    const toggle = root.querySelector('.combo-toggle');
+    let shown = [], active = -1, uid = list.id + '-o', skipOpen = false;
+    const norm = (s) => String(s).toLowerCase().replace(/\s+/g, '');
+
+    function open() { list.hidden = false; input.setAttribute('aria-expanded', 'true'); }
+    function close() { list.hidden = true; input.setAttribute('aria-expanded', 'false'); input.removeAttribute('aria-activedescendant'); active = -1; }
+    function setActive(i) {
+      const opts = list.querySelectorAll('[role=option]');
+      opts.forEach((o) => o.setAttribute('aria-selected', 'false'));
+      active = i;
+      if (i >= 0 && opts[i]) {
+        opts[i].setAttribute('aria-selected', 'true');
+        input.setAttribute('aria-activedescendant', opts[i].id);
+        opts[i].scrollIntoView({ block: 'nearest' });
+      }
+    }
+    function render(filter) {
+      const q = norm(filter || '');
+      shown = items.filter((x) => !q || norm(x).includes(q));
+      list.innerHTML = '';
+      if (!shown.length) {
+        const li = document.createElement('li');
+        li.className = 'combo-empty';
+        li.textContent = 'ไม่พบรายการที่ค้นหา ลองพิมพ์คำอื่น';
+        list.appendChild(li);
+        return;
+      }
+      shown.forEach((x, i) => {
+        const li = document.createElement('li');
+        li.id = uid + i; li.setAttribute('role', 'option'); li.tabIndex = -1;
+        li.setAttribute('aria-selected', 'false'); li.textContent = x;
+        li.addEventListener('click', () => choose(x));
+        li.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); choose(x); } });
+        list.appendChild(li);
+      });
+    }
+    function choose(x) {
+      input.value = x; close();
+      skipOpen = true; input.focus(); skipOpen = false;   // คืนโฟกัสให้ช่อง โดยไม่เปิดรายการซ้ำ
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    input.addEventListener('input', () => { render(input.value); open(); });
+    input.addEventListener('focus', () => { if (skipOpen) return; render(items.includes(input.value) ? '' : input.value); open(); });
+    input.addEventListener('click', () => { if (list.hidden) { render(items.includes(input.value) ? '' : input.value); open(); } });
+    toggle.addEventListener('click', () => {
+      if (list.hidden) { render(''); open(); input.focus(); } else { close(); }
+    });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') { e.preventDefault(); if (list.hidden) { render(input.value); open(); } setActive(Math.min(active + 1, shown.length - 1)); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(Math.max(active - 1, 0)); }
+      else if (e.key === 'Enter') { if (!list.hidden && active >= 0) { e.preventDefault(); choose(shown[active]); } else { e.preventDefault(); } }
+      else if (e.key === 'Escape') { close(); }
+    });
+    root.addEventListener('focusout', (e) => { if (!root.contains(e.relatedTarget)) setTimeout(close, 120); });
+
+    return {
+      get value() { return items.includes(input.value.trim()) ? input.value.trim() : ''; },
+      get text() { return input.value.trim(); },
+      reset() { input.value = ''; close(); },
+      el: input
+    };
+  }
+  const deptCombo = makeCombo($('deptCombo'), DEPARTMENTS);
+  const posCombo = makeCombo($('posCombo'), POSITIONS);
+
+  /* ---------- ขั้นตอน ---------- */
+  const steps = [$('step1'), $('step2'), $('step3')];
+  const progressItems = $('progress').querySelectorAll('li');
+  let step = 1;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function go(n, opts) {
+    step = n;
+    steps.forEach((s, i) => { s.hidden = (i + 1) !== n; });
+    progressItems.forEach((li, i) => {
+      li.className = (i + 1) < n ? 'done' : ((i + 1) === n ? 'now' : '');
+      if ((i + 1) === n) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current');
+    });
+    if (n === 3) renderReview();
+    $('formAlert').innerHTML = '';
+    const h = $('stepTitle' + n);
+    h.focus({ preventScroll: true });
+    if (!(opts && opts.silent)) $('formView').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+  }
+
+  /* ---------- ตรวจสอบข้อมูล ---------- */
+  function setErr(fieldId, errId, msg) {
+    const f = $(fieldId), e = $(errId);
+    if (msg) { f.classList.add('invalid'); e.textContent = msg; } else { f.classList.remove('invalid'); e.textContent = ''; }
+    return !msg;
+  }
+  const normPhone = (s) => {
+    let d = String(s || '').replace(/\D/g, '');
+    if (d.indexOf('66') === 0 && d.length === 11) d = '0' + d.slice(2);
+    return d;
+  };
+  function checkName() {
+    const v = $('name').value.trim().replace(/\s+/g, ' ');
+    if (!v) return setErr('f-name', 'e-name', 'กรุณากรอกชื่อ-นามสกุล');
+    if (v.split(' ').length < 2) return setErr('f-name', 'e-name', 'กรุณากรอกทั้งชื่อและนามสกุล โดยเว้นวรรคระหว่างกัน');
+    return setErr('f-name', 'e-name', '');
+  }
+  function checkPhone() {
+    const d = normPhone($('phone').value);
+    if (!d) return setErr('f-phone', 'e-phone', 'กรุณากรอกเบอร์โทรศัพท์');
+    if (!/^0\d{8,9}$/.test(d)) return setErr('f-phone', 'e-phone', 'เบอร์โทรศัพท์ไม่ถูกต้อง ต้องขึ้นต้นด้วย 0 และมี 9–10 หลัก');
+    return setErr('f-phone', 'e-phone', '');
+  }
+  function checkEmail() {
+    const v = $('email').value.trim();
+    if (!v) return setErr('f-email', 'e-email', 'กรุณากรอกอีเมล');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) return setErr('f-email', 'e-email', 'อีเมลไม่ถูกต้อง ตัวอย่างที่ถูกต้อง: example@gmail.com');
+    return setErr('f-email', 'e-email', '');
+  }
+  const currentType = () => { const r = document.querySelector('input[name=type]:checked'); return r ? r.value : ''; };
+  function checkType() { return setErr('f-type', 'e-type', currentType() ? '' : 'กรุณาเลือกประเภทผู้เข้าร่วม'); }
+  function checkDept() {
+    if (currentType() !== 'INT') return true;
+    if (deptCombo.value) return setErr('f-dept', 'e-dept', '');
+    return setErr('f-dept', 'e-dept', deptCombo.text ? 'กรุณาแตะเลือกฝ่ายจากรายการที่แสดง' : 'กรุณาเลือกฝ่าย / หน่วยงานต้นสังกัด');
+  }
+  function checkPos() {
+    if (currentType() !== 'INT') return true;
+    if (posCombo.value) return setErr('f-pos', 'e-pos', '');
+    return setErr('f-pos', 'e-pos', posCombo.text ? 'กรุณาแตะเลือกตำแหน่งจากรายการที่แสดง' : 'กรุณาเลือกตำแหน่งงาน');
+  }
+  function focusFirstInvalid(root) {
+    const f = root.querySelector('.field.invalid');
+    if (f) { const t = f.querySelector('input,select'); if (t) t.focus(); f.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); }
+  }
+  function validateStep(n) {
+    let ok;
+    if (n === 1) { ok = [checkName(), checkPhone(), checkEmail()].every(Boolean); }
+    else if (n === 2) { ok = [checkType(), checkDept(), checkPos()].every(Boolean); }
+    else { ok = setErr('f-consent', 'e-consent', $('consent').checked ? '' : 'กรุณาติ๊กช่องยินยอมก่อนยืนยันการลงทะเบียน'); }
+    if (!ok) focusFirstInvalid(steps[n - 1]);
+    return ok;
+  }
+
+  $('name').addEventListener('blur', () => { if ($('name').value) checkName(); });
+  $('phone').addEventListener('blur', () => { if ($('phone').value) checkPhone(); });
+  $('email').addEventListener('blur', () => { if ($('email').value) checkEmail(); });
+  $('consent').addEventListener('change', () => setErr('f-consent', 'e-consent', ''));
+  deptCombo.el.addEventListener('change', checkDept);
+  posCombo.el.addEventListener('change', checkPos);
+
+  document.querySelectorAll('input[name=type]').forEach((r) => r.addEventListener('change', () => {
+    $('internalBox').hidden = currentType() !== 'INT';
+    if (currentType() !== 'INT') { deptCombo.reset(); posCombo.reset(); setErr('f-dept', 'e-dept', ''); setErr('f-pos', 'e-pos', ''); }
+    setErr('f-type', 'e-type', '');
+  }));
+
+  document.querySelectorAll('[data-next]').forEach((b) => b.addEventListener('click', () => { if (validateStep(step)) go(step + 1); }));
+  document.querySelectorAll('[data-back]').forEach((b) => b.addEventListener('click', () => go(step - 1)));
+
+  /* ---------- สรุปก่อนยืนยัน ---------- */
+  function collect() {
+    const t = currentType();
+    return {
+      name: $('name').value.trim().replace(/\s+/g, ' '),
+      phone: normPhone($('phone').value),
+      email: $('email').value.trim(),
+      type: t ? TYPES[t] : '',
+      dept: t === 'INT' ? deptCombo.value : '',
+      position: t === 'INT' ? posCombo.value : ''
+    };
+  }
+  function renderReview() {
+    const d = collect();
+    const rows = [
+      ['ชื่อ-นามสกุล', d.name, 1], ['เบอร์โทรศัพท์', d.phone, 1], ['อีเมล', d.email, 1],
+      ['ประเภทผู้เข้าร่วม', d.type, 2]
+    ];
+    if (d.dept) rows.push(['ฝ่าย / หน่วยงานต้นสังกัด', d.dept, 2], ['ตำแหน่งงาน', d.position, 2]);
+    $('review').innerHTML = rows.map((r) =>
+      '<div class="row"><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd>' +
+      '<button type="button" class="linkbtn" data-edit="' + r[2] + '" aria-label="แก้ไข ' + esc(r[0]) + '">แก้ไข</button></div>').join('');
+    $('review').querySelectorAll('[data-edit]').forEach((b) => b.addEventListener('click', () => go(Number(b.dataset.edit))));
+  }
+
+  /* ---------- ส่งข้อมูล ---------- */
+  $('regForm').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    if (!validateStep(1)) return go(1);
+    if (!validateStep(2)) return go(2);
+    if (!validateStep(3)) return;
+
+    const btn = $('submitBtn'); const label = btn.textContent;
+    btn.disabled = true; btn.textContent = 'กำลังส่งข้อมูล… กรุณารอสักครู่';
+    $('formAlert').innerHTML = '';
+    try {
+      const d = collect();
+      d.consent = true; d.website = $('website').value;
+      const r = await callApi('register', d);
+      if (!r || !r.ok) {
+        $('formAlert').innerHTML = '<div class="alert error">' + esc((r && r.error) || 'ไม่สามารถลงทะเบียนได้ กรุณาลองใหม่อีกครั้ง') + '</div>';
+        $('formAlert').scrollIntoView({ block: 'center' });
+        return;
+      }
+      showDone(r);
+    } catch (e) {
+      const msg = e.code === 'NOT_CONFIGURED'
+        ? 'ระบบยังไม่ได้เชื่อมต่อฐานข้อมูล (ผู้ดูแลต้องตั้งค่า API_URL ในไฟล์ config.js)'
+        : (e.name === 'AbortError'
+          ? 'ระบบตอบสนองช้า ข้อมูลของท่านอาจถูกบันทึกแล้ว กรุณารอสักครู่แล้วกด “ยืนยันการลงทะเบียน” อีกครั้ง ระบบจะแสดงบัตรเดิมให้หากท่านลงทะเบียนไว้แล้ว'
+          : 'ไม่สามารถเชื่อมต่อได้ กรุณาตรวจสอบอินเทอร์เน็ตแล้วลองใหม่อีกครั้ง');
+      $('formAlert').innerHTML = '<div class="alert error">' + esc(msg) + '</div>';
+      $('formAlert').scrollIntoView({ block: 'center' });
+    } finally {
+      btn.disabled = false; btn.textContent = label;
+    }
+  });
+
+  /* ---------- หน้าสำเร็จ + บัตร QR ---------- */
+  let ticketData = null;
+
+  function qrMatrix(text) {
+    const qr = qrcode(0, 'M'); qr.addData(text); qr.make();
+    return qr;
+  }
+  function drawQR(ctx, text, x, y, size) {
+    const qr = qrMatrix(text), n = qr.getModuleCount(), quiet = 2;
+    const cell = size / (n + quiet * 2);
+    ctx.fillStyle = '#FFFFFF'; ctx.fillRect(x, y, size, size);
+    ctx.fillStyle = '#2A2540';
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) {
+      if (qr.isDark(r, c)) ctx.fillRect(x + (c + quiet) * cell, y + (r + quiet) * cell, Math.ceil(cell), Math.ceil(cell));
+    }
+  }
+
+  function showDone(r) {
+    const reg = r.registration;
+    ticketData = reg;
+    $('formView').hidden = true; $('doneView').hidden = false;
+    $('doneBadge').textContent = r.already ? 'ท่านลงทะเบียนไว้แล้ว' : 'ลงทะเบียนสำเร็จ';
+    $('doneBadge').classList.toggle('warn', !!r.already);
+    $('doneTitle').textContent = r.already ? 'พบข้อมูลการลงทะเบียนของท่าน' : 'ขอบคุณที่ลงทะเบียน';
+    $('doneMsg').textContent = 'กรุณาแสดงคิวอาร์โค้ดนี้ที่จุดลงทะเบียนในวันงาน';
+    $('passId').textContent = reg.id;
+    $('passName').textContent = reg.name;
+    $('passType').textContent = reg.type;
+    drawQR($('qrCanvas').getContext('2d'), reg.id, 0, 0, 520);
+
+    let note = '';
+    if (r.already) {
+      note = '<div class="alert info">เบอร์โทรศัพท์นี้ลงทะเบียนไว้แล้ว ระบบจึงไม่สร้างรายการซ้ำ ท่านใช้บัตรนี้เข้างานได้เลย</div>';
+    } else if (r.mail === 'sent') {
+      note = '<div class="alert ok">ส่งอีเมลยืนยันและข้อมูลการติดต่อไปที่ <b>' + esc(reg.email) + '</b> แล้ว หากไม่พบ กรุณาตรวจในกล่องจดหมายขยะ (Spam)</div>';
+    } else {
+      note = '<div class="alert warn">ลงทะเบียนสำเร็จ แต่ยังส่งอีเมลยืนยันไม่ได้ กรุณา <b>บันทึกบัตรเข้างานเป็นรูปภาพ</b> ไว้ใช้ในวันงาน</div>';
+    }
+    $('mailNote').innerHTML = note;
+    $('doneTitle').focus({ preventScroll: true });
+    window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+  }
+
+  async function saveTicketPng() {
+    if (!ticketData) return;
+    try { await Promise.all([document.fonts.load('800 56px "Noto Serif Thai"'), document.fonts.load('700 36px Sarabun')]); } catch (e) { /* ใช้ฟอนต์สำรอง */ }
+    let lotus = null;
+    try { lotus = new Image(); lotus.src = 'lotus.svg'; await lotus.decode(); } catch (e) { lotus = null; }
+
+    const W = 1000, H = 1560, MARGIN = 60, c = document.createElement('canvas'); c.width = W; c.height = H;
+    const g = c.getContext('2d');
+    const SERIF = '"Noto Serif Thai", "TH Sarabun New", serif', SANS = 'Sarabun, "TH Sarabun New", sans-serif';
+    const bg = g.createLinearGradient(0, 0, W, H);
+    bg.addColorStop(0, '#D6E8F7'); bg.addColorStop(.3, '#F8D7E3'); bg.addColorStop(.6, '#E4DAF4'); bg.addColorStop(.85, '#D8EEDD'); bg.addColorStop(1, '#FBF0C8');
+    g.fillStyle = bg; g.fillRect(0, 0, W, H);
+    g.fillStyle = '#FFFFFF'; roundRect(g, MARGIN, MARGIN, W - MARGIN * 2, H - MARGIN * 2, 48); g.fill();
+    g.textAlign = 'center';
+
+    let y = 110;
+    if (lotus) { g.drawImage(lotus, W / 2 - 160, y, 320, 259); y += 259 + 40; } else { y += 40; }
+
+    // ชื่อกิจกรรม: ย่อขนาดให้พอดีความกว้าง (ภาษาไทยไม่มีช่องว่างให้ตัดบรรทัด)
+    g.fillStyle = '#2A2540';
+    g.font = fit(g, CONFIG.EVENT_NAME, W - 200, 54, 800, SERIF);
+    g.fillText(CONFIG.EVENT_NAME, W / 2, y + 40); y += 40;
+    g.fillStyle = '#4A4563';
+    [CONFIG.EVENT_DATE, CONFIG.EVENT_PLACE].forEach((t) => {
+      if (!t) return;
+      g.font = fit(g, t, W - 200, 32, 700, SANS); g.fillText(t, W / 2, y + 52); y += 46;
+    });
+    y += 60;
+
+    // กรอบ QR
+    const box = 640, bx = (W - box) / 2;
+    g.strokeStyle = '#5B3F8C'; g.lineWidth = 6; g.setLineDash([22, 16]);
+    roundRect(g, bx, y, box, box, 36); g.stroke(); g.setLineDash([]);
+    drawQR(g, ticketData.id, bx + 30, y + 30, box - 60);
+    y += box + 85;
+
+    g.fillStyle = '#2A2540'; g.font = '800 76px ' + SERIF; g.fillText(ticketData.id, W / 2, y); y += 30;
+    g.font = '800 46px ' + SANS; y = wrapText(g, ticketData.name, W / 2, y + 40, W - 220, 58) + 20;
+    g.font = '700 32px ' + SANS; g.fillStyle = '#4A4563'; g.fillText(ticketData.type, W / 2, y + 30); y += 90;
+    g.font = '700 28px ' + SANS; g.fillText('แสดงคิวอาร์โค้ดนี้ที่จุดลงทะเบียนในวันงาน', W / 2, y);
+
+    c.toBlob((blob) => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = 'บัตรเข้างาน-' + ticketData.id + '.png';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    }, 'image/png');
+  }
+  function fit(g, text, maxW, startPx, weight, family) {
+    let px = startPx;
+    for (; px > 18; px -= 2) { g.font = weight + ' ' + px + 'px ' + family; if (g.measureText(text).width <= maxW) break; }
+    return weight + ' ' + px + 'px ' + family;
+  }
+  function roundRect(g, x, y, w, h, r) {
+    g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath();
+  }
+  // ตัดบรรทัดตามช่องว่าง (ชื่อ-นามสกุลมีช่องว่าง) คืนค่าตำแหน่ง y ของบรรทัดสุดท้าย
+  function wrapText(g, text, cx, y, maxW, lh) {
+    const words = text.split(' '); let line = '';
+    words.forEach((w) => {
+      const test = line ? line + ' ' + w : w;
+      if (g.measureText(test).width > maxW && line) { g.fillText(line, cx, y); y += lh; line = w; } else { line = test; }
+    });
+    if (line) g.fillText(line, cx, y);
+    return y;
+  }
+
+  $('saveBtn').addEventListener('click', saveTicketPng);
+  $('printBtn').addEventListener('click', () => window.print());
+  $('againBtn').addEventListener('click', () => {
+    $('regForm').reset(); deptCombo.reset(); posCombo.reset();
+    $('internalBox').hidden = true; ticketData = null;
+    document.querySelectorAll('.field.invalid').forEach((f) => f.classList.remove('invalid'));
+    $('doneView').hidden = true; $('formView').hidden = false; go(1, { silent: true });
+    window.scrollTo({ top: 0 });
+  });
+
+  go(1, { silent: true });
+})();
+</script>
+</body>
+</html>
