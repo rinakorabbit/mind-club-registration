@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>เจ้าหน้าที่ | ระบบลงทะเบียนกิจกรรมการพัฒนาจิต</title>
+<link rel="icon" href="lotus.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@700;800&family=Sarabun:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="admin">
+
+<!-- ================= เข้าสู่ระบบ ================= -->
+<div class="wrap" id="loginView">
+  <div class="panel login">
+    <img class="lotus" src="lotus.svg" alt="">
+    <h1 style="font-size:1.8rem;margin:.5rem 0 .3rem">สำหรับเจ้าหน้าที่</h1>
+    <p style="margin:0 0 1.2rem;color:var(--muted)">กรอกรหัสผ่านเพื่อดูรายชื่อ สถิติ และเช็กอินหน้างาน</p>
+    <div id="loginAlert" role="alert"></div>
+    <form id="loginForm">
+      <div class="field" style="text-align:left">
+        <label for="pw">รหัสผ่านเจ้าหน้าที่</label>
+        <input type="password" id="pw" autocomplete="current-password">
+      </div>
+      <button class="btn btn-primary" style="width:100%" type="submit" id="loginBtn">เข้าสู่ระบบ</button>
+    </form>
+  </div>
+</div>
+
+<!-- ================= ระบบเจ้าหน้าที่ ================= -->
+<div class="wrap wide" id="appView" hidden>
+  <header class="topbar">
+    <img src="lotus.svg" alt="">
+    <div class="ttl">
+      <p class="org" id="orgLine"></p>
+      <h1>ระบบเจ้าหน้าที่ : กิจกรรมการพัฒนาจิตเพื่อคุณภาพชีวิต</h1>
+    </div>
+    <div class="tools">
+      <span id="updated" class="hint" style="margin:0;align-self:center"></span>
+      <button class="btn btn-ghost" id="refreshBtn" type="button">รีเฟรชข้อมูล</button>
+      <button class="btn btn-ghost" id="logoutBtn" type="button">ออกจากระบบ</button>
+    </div>
+  </header>
+
+  <div id="appAlert" role="alert"></div>
+
+  <div class="tabs" role="tablist" aria-label="เมนูเจ้าหน้าที่">
+    <button class="tab" role="tab" id="tab-overview" aria-controls="p-overview" aria-selected="true">ภาพรวม</button>
+    <button class="tab" role="tab" id="tab-list" aria-controls="p-list" aria-selected="false">รายชื่อ</button>
+    <button class="tab" role="tab" id="tab-checkin" aria-controls="p-checkin" aria-selected="false">เช็กอินหน้างาน</button>
+  </div>
+
+  <!-- ภาพรวม -->
+  <section id="p-overview" role="tabpanel" aria-labelledby="tab-overview">
+    <div class="stats" id="stats"></div>
+    <div class="grid2">
+      <div class="panel"><h3>ฝ่าย / หน่วยงานของบุคลากร รพ. (10 อันดับแรก)</h3><div class="bars" id="deptBars"></div></div>
+      <div class="panel"><h3>จำนวนผู้ลงทะเบียนรายวัน</h3><div class="bars" id="dayBars"></div></div>
+    </div>
+  </section>
+
+  <!-- รายชื่อ -->
+  <section id="p-list" role="tabpanel" aria-labelledby="tab-list" hidden>
+    <div class="toolbar">
+      <input type="search" id="q" placeholder="ค้นหาชื่อ / เบอร์โทร / รหัส / ฝ่าย" aria-label="ค้นหา">
+      <select id="flt" aria-label="กรองรายการ">
+        <option value="all">ทั้งหมด</option>
+        <option value="in">เช็กอินแล้ว</option>
+        <option value="out">ยังไม่เช็กอิน</option>
+        <option value="int">บุคลากร รพ.</option>
+        <option value="ext">บุคลากรภายนอก</option>
+      </select>
+      <button class="btn btn-leaf" id="csvBtn" type="button">ดาวน์โหลด CSV</button>
+      <span id="listCount" class="hint" style="margin:0"></span>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>รหัส</th><th>ชื่อ-นามสกุล</th><th>ประเภท</th><th>ฝ่าย / ตำแหน่ง</th><th>โทรศัพท์</th><th>อีเมล</th><th>ลงทะเบียน</th><th>สถานะ</th><th></th></tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- เช็กอิน -->
+  <section id="p-checkin" role="tabpanel" aria-labelledby="tab-checkin" hidden>
+    <div class="panel" style="text-align:center">
+      <h2 style="margin-bottom:.4rem">สแกนคิวอาร์โค้ดผู้เข้าร่วม</h2>
+      <p style="margin:0 0 1rem;color:var(--muted)">กดปุ่มเปิดกล้อง แล้วให้ผู้เข้าร่วมแสดงบัตร QR หน้าจอหรือกระดาษ</p>
+      <div style="display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-bottom:1rem">
+        <button class="btn btn-primary" id="camOn" type="button">เปิดกล้องสแกน</button>
+        <button class="btn btn-ghost" id="camOff" type="button" hidden>ปิดกล้อง</button>
+      </div>
+      <div id="reader" hidden></div>
+      <div id="scanResult" role="status" aria-live="assertive"></div>
+
+      <form class="manual" id="manualForm">
+        <label for="manual" class="hint" style="flex:1 1 100%;margin:0;text-align:left">กรณีสแกนไม่ได้ พิมพ์รหัสลงทะเบียน (เช่น MIND-0001) หรือเบอร์โทรศัพท์</label>
+        <input type="text" id="manual" autocomplete="off" placeholder="MIND-0001 หรือ 0812345678">
+        <button class="btn btn-primary" type="submit">เช็กอิน</button>
+      </form>
+
+      <h3 style="margin-top:1.6rem;font-size:1.15rem">เช็กอินล่าสุด</h3>
+      <ul class="recent" id="recent"></ul>
+    </div>
+  </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+<script src="config.js"></script>
+<script>
+(function () {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  $('orgLine').textContent = CONFIG.ORG_UNIT + ' ' + CONFIG.HOSPITAL;
+
+  let pw = sessionStorage.getItem('adminPw') || '';
+  let rows = [];
+  let timer = null;
+
+  /* ---------- เข้าสู่ระบบ ---------- */
+  function showApp() { $('loginView').hidden = true; $('appView').hidden = false; }
+  function logout(msg) {
+    sessionStorage.removeItem('adminPw'); pw = ''; rows = [];
+    stopScan(); clearInterval(timer);
+    $('appView').hidden = true; $('loginView').hidden = false; $('pw').value = '';
+    $('loginAlert').innerHTML = msg ? '<div class="alert error">' + esc(msg) + '</div>' : '';
+    $('pw').focus();
+  }
+  $('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const v = $('pw').value; if (!v) return;
+    const b = $('loginBtn'); b.disabled = true; b.textContent = 'กำลังตรวจสอบ…';
+    $('loginAlert').innerHTML = '';
+    try {
+      pw = v;
+      await load(true);
+      sessionStorage.setItem('adminPw', pw);
+      showApp(); timer = setInterval(() => { if (!document.hidden) load(false).catch(() => {}); }, 60000);
+    } catch (err) {
+      pw = '';
+      $('loginAlert').innerHTML = '<div class="alert error">' + esc(err.code === 'NOT_CONFIGURED' ? 'ยังไม่ได้ตั้งค่า API_URL ในไฟล์ config.js' : (err.message || 'เข้าสู่ระบบไม่สำเร็จ')) + '</div>';
+    } finally { b.disabled = false; b.textContent = 'เข้าสู่ระบบ'; }
+  });
+  $('logoutBtn').addEventListener('click', () => logout());
+  $('refreshBtn').addEventListener('click', async () => {
+    const b = $('refreshBtn'); b.disabled = true;
+    try { await load(false); } catch (e) { alert_(e.message); } finally { b.disabled = false; }
+  });
+  function alert_(msg) { $('appAlert').innerHTML = msg ? '<div class="alert error">' + esc(msg) + '</div>' : ''; }
+
+  async function load(first) {
+    const r = await callApi('adminList', { password: pw });
+    if (!r.ok) {
+      if (r.code === 'AUTH') { if (first) throw new Error('รหัสผ่านไม่ถูกต้อง'); logout('เซสชันหมดอายุหรือรหัสผ่านไม่ถูกต้อง กรุณาเข้าสู่ระบบใหม่'); throw new Error('AUTH'); }
+      throw new Error(r.error || 'โหลดข้อมูลไม่สำเร็จ');
+    }
+    rows = r.rows; alert_('');
+    $('updated').textContent = 'อัปเดตล่าสุด ' + new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.';
+    renderAll();
+  }
+
+  /* ---------- แท็บ ---------- */
+  const tabs = ['overview', 'list', 'checkin'];
+  function selectTab(name) {
+    tabs.forEach((t) => {
+      $('tab-' + t).setAttribute('aria-selected', String(t === name));
+      $('p-' + t).hidden = t !== name;
+    });
+    if (name !== 'checkin') stopScan();
+  }
+  tabs.forEach((t) => $('tab-' + t).addEventListener('click', () => selectTab(t)));
+
+  /* ---------- ภาพรวม ---------- */
+  const isIn = (r) => r.checkedIn;
+  function bars(el, entries, total) {
+    if (!entries.length) { el.innerHTML = '<p class="empty" style="padding:1rem">ยังไม่มีข้อมูล</p>'; return; }
+    const max = Math.max(...entries.map((e) => e[1]));
+    el.innerHTML = entries.map((e) =>
+      '<div class="bar"><div class="lbl"><span>' + esc(e[0]) + '</span><span>' + e[1].toLocaleString('th-TH') + '</span></div>' +
+      '<div class="track"><div class="fill" style="width:' + Math.max(3, Math.round(e[1] / max * 100)) + '%"></div></div></div>').join('');
+  }
+  function renderStats() {
+    const total = rows.length;
+    const internal = rows.filter((r) => r.type === TYPES.INT).length;
+    const checked = rows.filter(isIn).length;
+    const pct = total ? Math.round(checked / total * 100) : 0;
+    const cards = [
+      ['s1', total, 'ลงทะเบียนทั้งหมด (ท่าน)'],
+      ['s2', internal, 'บุคลากร รพ.สมเด็จฯ ณ ศรีราชา'],
+      ['s3', total - internal, 'บุคลากรภายนอกโรงพยาบาล'],
+      ['s4', checked + ' (' + pct + '%)', 'เช็กอินแล้ว'],
+      ['s5', total - checked, 'ยังไม่เช็กอิน']
+    ];
+    $('stats').innerHTML = cards.map((c) => '<div class="stat ' + c[0] + '"><b>' + esc(typeof c[1] === 'number' ? c[1].toLocaleString('th-TH') : c[1]) + '</b><span>' + esc(c[2]) + '</span></div>').join('');
+
+    const byDept = {};
+    rows.forEach((r) => { if (r.dept) byDept[r.dept] = (byDept[r.dept] || 0) + 1; });
+    bars($('deptBars'), Object.entries(byDept).sort((a, b) => b[1] - a[1]).slice(0, 10));
+
+    const byDay = {};
+    rows.forEach((r) => { const d = (r.ts || '').slice(0, 10); if (d) byDay[d] = (byDay[d] || 0) + 1; });
+    const days = Object.entries(byDay).sort((a, b) => a[0].localeCompare(b[0])).slice(-14)
+      .map((e) => [new Date(e[0] + 'T00:00:00').toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' }), e[1]]);
+    bars($('dayBars'), days);
+  }
+
+  /* ---------- รายชื่อ ---------- */
+  const timeOnly = (s) => (s || '').slice(11, 16);
+  function filtered() {
+    const q = $('q').value.trim().toLowerCase(), f = $('flt').value;
+    return rows.filter((r) => {
+      if (f === 'in' && !r.checkedIn) return false;
+      if (f === 'out' && r.checkedIn) return false;
+      if (f === 'int' && r.type !== TYPES.INT) return false;
+      if (f === 'ext' && r.type !== TYPES.EXT) return false;
+      if (!q) return true;
+      return [r.id, r.name, r.phone, r.email, r.dept, r.position].join(' ').toLowerCase().includes(q);
+    });
+  }
+  function renderList() {
+    const list = filtered();
+    $('listCount').textContent = 'แสดง ' + list.length.toLocaleString('th-TH') + ' จาก ' + rows.length.toLocaleString('th-TH') + ' รายการ';
+    $('tbody').innerHTML = list.length ? list.map((r) =>
+      '<tr><td class="mono">' + esc(r.id) + '</td><td><b>' + esc(r.name) + '</b></td><td>' + esc(r.type === TYPES.INT ? 'บุคลากร รพ.' : 'ภายนอก') + '</td>' +
+      '<td>' + esc(r.dept) + (r.position ? '<br><small>' + esc(r.position) + '</small>' : '') + '</td>' +
+      '<td class="mono">' + esc(r.phone) + '</td><td>' + esc(r.email) + '</td><td class="mono">' + esc(r.ts.slice(0, 16)) + '</td>' +
+      '<td>' + (r.checkedIn ? '<span class="pill in">เช็กอิน ' + esc(timeOnly(r.checkinAt)) + ' น.</span>' : '<span class="pill out">ยังไม่เช็กอิน</span>') + '</td>' +
+      '<td>' + (r.checkedIn
+        ? '<button class="btn btn-danger btn-sm" data-undo="' + esc(r.id) + '" type="button">ยกเลิก</button>'
+        : '<button class="btn btn-primary btn-sm" data-in="' + esc(r.id) + '" type="button">เช็กอิน</button>') + '</td></tr>').join('')
+      : '<tr><td colspan="9" class="empty">ไม่พบรายการ</td></tr>';
+  }
+  $('q').addEventListener('input', renderList);
+  $('flt').addEventListener('change', renderList);
+  $('tbody').addEventListener('click', async (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    b.disabled = true;
+    try {
+      if (b.dataset.in) await doCheckin(b.dataset.in, 'manual', true);
+      else if (b.dataset.undo) {
+        if (!confirm('ยกเลิกการเช็กอินของรหัส ' + b.dataset.undo + ' ใช่หรือไม่?')) { b.disabled = false; return; }
+        const r = await callApi('undoCheckin', { password: pw, id: b.dataset.undo });
+        if (!r.ok) throw new Error(r.error || 'ยกเลิกไม่สำเร็จ');
+        patchRow(r.person); renderAll();
+      }
+    } catch (err) { alert_(err.message); b.disabled = false; }
+  });
+
+  $('csvBtn').addEventListener('click', () => {
+    const head = ['รหัส', 'วันเวลาที่ลงทะเบียน', 'ชื่อ-นามสกุล', 'ประเภท', 'ฝ่าย/หน่วยงาน', 'ตำแหน่ง', 'เบอร์โทรศัพท์', 'อีเมล', 'สถานะเช็กอิน', 'เวลาเช็กอิน'];
+    const cell = (v) => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+    const lines = [head.map(cell).join(',')].concat(filtered().map((r) =>
+      [r.id, r.ts, r.name, r.type, r.dept, r.position, '="' + r.phone + '"', r.email, r.checkedIn ? 'เช็กอินแล้ว' : 'ยังไม่เช็กอิน', r.checkinAt].map(cell).join(',')));
+    const blob = new Blob(['\uFEFF' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = 'รายชื่อผู้ลงทะเบียน-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+  });
+
+  function patchRow(p) { const i = rows.findIndex((r) => r.id === p.id); if (i >= 0) rows[i] = p; }
+  function renderAll() { renderStats(); renderList(); }
+
+  /* ---------- เช็กอิน ---------- */
+  const recent = [];
+  function showResult(kind, big, small) {
+    $('scanResult').innerHTML = '<div class="scan-result ' + kind + '"><span class="big">' + esc(big) + '</span>' + esc(small || '') + '</div>';
+  }
+  function pushRecent(p) {
+    recent.unshift({ name: p.name, id: p.id, at: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) });
+    recent.length = Math.min(recent.length, 8);
+    $('recent').innerHTML = recent.map((x) => '<li><span>' + esc(x.name) + ' <small>(' + esc(x.id) + ')</small></span><span class="mono">' + esc(x.at) + ' น.</span></li>').join('');
+  }
+  async function doCheckin(code, source, quiet) {
+    const r = await callApi('checkin', { password: pw, code: String(code).trim() });
+    if (!r.ok) {
+      if (r.code === 'AUTH') { logout('เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่'); return; }
+      throw new Error(r.error || 'เช็กอินไม่สำเร็จ');
+    }
+    if (r.status === 'notfound') {
+      showResult('bad', 'ไม่พบข้อมูลในระบบ', 'รหัส/เบอร์ที่ได้รับ: ' + code);
+      if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+      return;
+    }
+    patchRow(r.person); renderAll();
+    if (r.status === 'checked') {
+      showResult('ok', '✓ เช็กอินสำเร็จ : ' + r.person.name, (r.person.dept ? r.person.dept + ' · ' : '') + r.person.id);
+      pushRecent(r.person);
+    } else {
+      showResult('already', 'เช็กอินไปแล้ว : ' + r.person.name, 'เมื่อ ' + timeOnly(r.person.checkinAt) + ' น. · ' + r.person.id);
+    }
+    if (navigator.vibrate) navigator.vibrate(120);
+  }
+  $('manualForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const v = $('manual').value.trim(); if (!v) return;
+    try { await doCheckin(v, 'manual'); $('manual').value = ''; $('manual').focus(); } catch (err) { showResult('bad', 'เกิดข้อผิดพลาด', err.message); }
+  });
+
+  let scanner = null, busy = false, lastCode = '', lastAt = 0;
+  async function startScan() {
+    if (!window.Html5Qrcode) { showResult('bad', 'โหลดตัวสแกนไม่สำเร็จ', 'ตรวจสอบอินเทอร์เน็ต หรือใช้ช่องพิมพ์รหัสด้านล่างแทน'); return; }
+    $('reader').hidden = false; $('camOn').hidden = true; $('camOff').hidden = false;
+    scanner = new Html5Qrcode('reader');
+    try {
+      await scanner.start({ facingMode: 'environment' }, { fps: 10, qrbox: { width: 240, height: 240 } }, async (text) => {
+        const now = Date.now();
+        if (busy || (text === lastCode && now - lastAt < 4000)) return;
+        busy = true; lastCode = text; lastAt = now;
+        try { await doCheckin(text, 'scan'); } catch (err) { showResult('bad', 'เกิดข้อผิดพลาด', err.message); } finally { busy = false; }
+      }, () => {});
+    } catch (err) {
+      showResult('bad', 'เปิดกล้องไม่ได้', 'กรุณาอนุญาตการใช้กล้องในเบราว์เซอร์ หรือใช้ช่องพิมพ์รหัสด้านล่างแทน');
+      await stopScan();
+    }
+  }
+  async function stopScan() {
+    $('camOn').hidden = false; $('camOff').hidden = true; $('reader').hidden = true;
+    if (scanner) { try { await scanner.stop(); scanner.clear(); } catch (e) { /* ignore */ } scanner = null; }
+  }
+  $('camOn').addEventListener('click', startScan);
+  $('camOff').addEventListener('click', stopScan);
+
+  /* ---------- เริ่มต้น: ถ้ามีรหัสผ่านใน session ให้เข้าอัตโนมัติ ---------- */
+  if (pw) {
+    load(true).then(() => { showApp(); timer = setInterval(() => { if (!document.hidden) load(false).catch(() => {}); }, 60000); })
+      .catch(() => logout());
+  }
+})();
+</script>
+</body>
+</html>
